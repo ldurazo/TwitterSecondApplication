@@ -29,14 +29,13 @@ import java.util.ArrayList;
 /**
  * Created by ldurazo on 5/27/2014.
  */
-public class MobileTabActivity extends ListActivity implements ListAdapterUpdater {
-    TabActivityCommon mTabActivityCommon;
+public class MobileTabActivity extends ListActivity {
     DownloadTweetsTask mTask;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
 
         super.onCreate(savedInstanceState);
-        mTabActivityCommon = new TabActivityCommon(this);
         setContentView(R.layout.listlayout);
     }
 
@@ -46,8 +45,4 @@ public class MobileTabActivity extends ListActivity implements ListAdapterUpdate
         mTask = new DownloadTweetsTask(this);
         mTask.execute("#Mobile");
     }
-
-    @Override
-    public void updateListAdapter(String jsonResponse) {
-        mTabActivityCommon.updateListView(jsonResponse);
-    }}
+}

@@ -3,10 +3,12 @@ package com.internship.twittersecondapplication.app;
 import java.util.List;
 
 import android.content.Context;
+import android.media.Image;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 public class TweetListAdapter extends BaseAdapter {
@@ -40,8 +42,12 @@ public class TweetListAdapter extends BaseAdapter {
         View rowView = inflater.inflate(R.layout.custom_row_view, parent, false);
         TextView authorView = (TextView) rowView.findViewById(R.id.author);
         TextView tweetView = (TextView) rowView.findViewById(R.id.tweetText);
+        ImageView profilePicVew = (ImageView) rowView.findViewById(R.id.icon);
+
+        profilePicVew.setImageBitmap(tweetList.get(position).getProfilePictureBitmap());
         authorView.setText(tweetList.get(position).getAuthor());
         tweetView.setText(tweetList.get(position).getTweetText());
+
         return rowView;
     }
 

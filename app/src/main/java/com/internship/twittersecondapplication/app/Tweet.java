@@ -8,14 +8,14 @@ import android.graphics.Bitmap;
 public class Tweet {
     private String author = null;
     private String tweetText = null;
-    private Bitmap profilePictureURL=null;
+    private Bitmap profilePictureBitmap =null;
 
-    public Bitmap getProfilePictureURL() {
-        return profilePictureURL;
+    public Bitmap getProfilePictureBitmap() {
+        return profilePictureBitmap;
     }
 
-    public void setProfilePictureURL(Bitmap profilePictureURL) {
-        this.profilePictureURL = profilePictureURL;
+    public void setProfilePictureBitmap(Bitmap profilePictureBitmap) {
+        this.profilePictureBitmap = profilePictureBitmap;
     }
 
     public String getAuthor() {

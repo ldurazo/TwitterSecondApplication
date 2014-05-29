@@ -30,13 +30,11 @@ import java.util.ArrayList;
 /**
  * Created by ldurazo on 5/27/2014.
  */
-public class IOSTabActivity extends ListActivity implements ListAdapterUpdater{
-    TabActivityCommon mTabActivityCommon;
+public class IOSTabActivity extends ListActivity {
     DownloadTweetsTask mTask;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        mTabActivityCommon = new TabActivityCommon(this);
         setContentView(R.layout.listlayout);
     }
 
@@ -45,12 +43,6 @@ public class IOSTabActivity extends ListActivity implements ListAdapterUpdater{
         super.onResume();
         mTask = new DownloadTweetsTask(this);
         mTask.execute("#iOS");
-    }
-
-
-    @Override
-    public void updateListAdapter(String jsonResponse) {
-        mTabActivityCommon.updateListView(jsonResponse);
     }
 
 }

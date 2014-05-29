@@ -1,5 +1,9 @@
 package com.internship.twittersecondapplication.app;
 
+import android.app.Activity;
+import android.app.ListActivity;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.util.Base64;
 
@@ -12,6 +16,7 @@ import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.BasicHttpParams;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -20,13 +25,18 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Created by ldurazo on 5/28/2014.
  */
 public class DownloadTweetsTask extends AsyncTask<String, Void, String>{
-    final ListAdapterUpdater updater;
+    final ListActivity activity;
+    List<Tweet> tweetList=null;
     final static String CONSUMER_KEY = "eBpO9tjcGNZHw9XPT9D44eiFG";
     final static String CONSUMER_SECRET = "469d4t56pGDRRMNnWPUSec6w7RmWOhzhiGuumq3IjZq6lKA2eA";
     //twitter token URL is used to send the credentials
@@ -34,18 +44,49 @@ public class DownloadTweetsTask extends AsyncTask<String, Void, String>{
     //twitter stream URL is used to get the requested json and info. could be a search, a user, etc.
     final static String twitterStreamURL = "https://api.twitter.com/1.1/search/tweets.json?q=";
 
-    public DownloadTweetsTask(ListAdapterUpdater updater) {
-       this.updater = updater;
+    public DownloadTweetsTask(ListActivity activity) {
+       this.activity = activity;
     }
 
     @Override
     protected String doInBackground(String... searchName){
-        return getTwitterStream(searchName[0]);
+        String jsonFile = getTwitterStream(searchName[0]);
+        try {
+            Bitmap mBitmap;
+            JSONObject parentData = new JSONObject(jsonFile);
+            tweetList = new ArrayList<Tweet>();
+            JSONArray jTweetList = parentData.getJSONArray("statuses");
+            //Aux for the loop
+            JSONObject tempObject;
+            JSONObject tempUser;
+            for(int i=0; i<jTweetList.length();i++){
+                Tweet tweet = new Tweet();
+                tempObject = jTweetList.getJSONObject(i);
+                tweet.setTweetText(tempObject.getString("text"));
+                tempUser = tempObject.getJSONObject("user");
+                tweet.setAuthor(tempUser.getString("name"));
+                //creating bitmap for imageurl
+                URL url = new URL(tempUser.getString("profile_image_url"));
+                HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+                connection.setDoInput(true);
+                connection.connect();
+                InputStream input = connection.getInputStream();
+                mBitmap = BitmapFactory.decodeStream(input);
+                tweet.setProfilePictureBitmap(mBitmap);
+                //add the tweet object to the list
+                tweetList.add(tweet);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }catch (IOException e) {
+            e.printStackTrace();
+        }
+        return jsonFile;
     }
 
 
     protected void onPostExecute(String result){
-        updater.updateListAdapter(result);
+        activity.setListAdapter(new TweetListAdapter(activity, tweetList));
     }
 
 
@@ -75,7 +116,6 @@ public class DownloadTweetsTask extends AsyncTask<String, Void, String>{
             String rawAuthorization = getResponseBody(httpPost);
             //from the string obtained by "get response body" i obtain the token and the access token.
             JSONObject auth = new JSONObject(rawAuthorization);
-            String token_type = auth.getString("token_type");
             String access_token = auth.getString("access_token");
 
             //time to get the json with the information we actually want.
@@ -125,7 +165,4 @@ public class DownloadTweetsTask extends AsyncTask<String, Void, String>{
 
         return stringBuilder.toString();
     }
-
-
-
 }
