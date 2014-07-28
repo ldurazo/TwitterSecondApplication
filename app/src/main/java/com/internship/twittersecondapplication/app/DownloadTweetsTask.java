@@ -1,6 +1,5 @@
 package com.internship.twittersecondapplication.app;
 
-import android.app.Activity;
 import android.app.ListActivity;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
